@@ -1,0 +1,12 @@
+# البوت
+python-telegram-bot>=21.0,<23
+
+# قراءة ملفات إكسيل
+openpyxl>=3.1
+xlrd>=2.0 ; python_version >= "3.9"   # لملفات .xls القديمة
+
+# الموقع
+Flask>=3.0
+
+# قراءة ملف .env
+python-dotenv>=1.0

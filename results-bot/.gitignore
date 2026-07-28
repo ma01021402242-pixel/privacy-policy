@@ -1,0 +1,24 @@
+# لا ترفع بيانات الطلبة ولا التوكن على GitHub
+.env
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# ملفات النتيجة الخام
+*.xlsx
+*.xlsm
+*.xls
+*.csv
+*.tsv
+*.jsonl
+results*.json
+
+# استثناء ملف العيّنة
+!sample/sample_results.csv
+
+__pycache__/
+*.py[cod]
+.venv/
+venv/
