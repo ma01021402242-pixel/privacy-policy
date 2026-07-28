@@ -62,7 +62,25 @@ def parse_args(argv=None) -> argparse.Namespace:
         action="store_true",
         help="يعرض الأعمدة اللي اتعرف عليها وعيّنة من البيانات من غير ما يكتب حاجة",
     )
+    parser.add_argument(
+        "--confirm",
+        action="store_true",
+        help="يعرض الأعمدة والعيّنة، وبعدين يسأل قبل ما يستورد",
+    )
     return parser.parse_args(argv)
+
+
+def preview(sample: list[dict], mapping: dict, headers: list[str]) -> None:
+    print("\n👀 عيّنة من البيانات:")
+    shown = 0
+    for record in sample:
+        row = build_row(record, mapping, headers)
+        if row is None:
+            continue
+        print(f"   رقم الجلوس: {row[0]} | الاسم: {row[2]} | المجموع: {row[4]}")
+        shown += 1
+        if shown >= 3:
+            break
 
 
 def main(argv=None) -> int:
@@ -102,13 +120,25 @@ def main(argv=None) -> int:
         return 1
 
     if args.dry_run:
-        print("\n👀 عيّنة من البيانات (dry-run — مفيش حاجة اتكتبت):")
-        for record in sample[:3]:
-            row = build_row(record, mapping, headers)
-            if row is None:
-                continue
-            print(f"   رقم الجلوس: {row[0]} | الاسم: {row[2]} | المجموع: {row[4]}")
+        preview(sample, mapping, headers)
+        print("\n(dry-run — مفيش حاجة اتكتبت)")
         return 0
+
+    if args.confirm:
+        preview(sample, mapping, headers)
+        print(
+            "\n📌 راجع فوق: رقم الجلوس والاسم والمجموع طالعين صح؟"
+            "\n   (المواد المفروض تكون تحت «أعمدة إضافية» — ده الطبيعي)"
+        )
+        try:
+            answer = input("\n✅ نستورد؟ اكتب y واضغط Enter: ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            print("\nاتلغى.")
+            return 0
+        if answer not in {"y", "yes", "ن", "نعم", "ايوه", "ايوة", "أيوة"}:
+            print("اتلغى — مفيش حاجة اتكتبت.")
+            return 0
+        args.replace = True
 
     store = ResultsStore(args.db)
     store.init_schema()

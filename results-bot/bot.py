@@ -8,9 +8,12 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import re
 import time
+import urllib.error
+import urllib.request
 from collections import defaultdict, deque
 
 from telegram import Update
@@ -172,16 +175,53 @@ async def on_error(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
             pass
 
 
+TOKEN_HELP = (
+    "\n❌ تليجرام رفض التوكن.\n"
+    "   • افتح ملف .env وقارن التوكن باللي بعتهولك @BotFather\n"
+    "   • لازم يكون السطر كله من غير مسافات ولا علامات تنصيص:\n"
+    "     TELEGRAM_BOT_TOKEN=7123456789:AAH...\n"
+    "   • نسيت التوكن؟ ابعت /mybots لـ BotFather → اختار بوتك → API Token\n"
+)
+
+
+def preflight() -> str:
+    """يتأكد إن التوكن شغال قبل ما البوت يقوم، ويرجّع يوزر نيم البوت.
+
+    الفحص ده بيخلّي رسالة الخطأ مفهومة بدل ما مكتبة تليجرام تطبع تفاصيل تقنية.
+    """
+    url = f"https://api.telegram.org/bot{config.BOT_TOKEN}/getMe"
+    try:
+        with urllib.request.urlopen(url, timeout=20) as response:
+            payload = json.load(response)
+        return payload["result"]["username"]
+    except urllib.error.HTTPError as exc:
+        if exc.code in (401, 404):
+            raise SystemExit(TOKEN_HELP) from None
+        raise SystemExit(f"\n❌ تليجرام رد بخطأ {exc.code}. جرّب تاني بعد شوية.") from None
+    except urllib.error.URLError as exc:
+        raise SystemExit(
+            f"\n❌ مقدرتش أوصل لتليجرام: {exc.reason}\n"
+            "   • اتأكد إن النت شغال\n"
+            "   • لو تليجرام محجوب عندك هتحتاج VPN، أو شغّل البوت على سيرفر\n"
+        ) from None
+    except (KeyError, ValueError):
+        raise SystemExit("\n❌ رد غير متوقع من تليجرام. جرّب تاني بعد شوية.") from None
+
+
 def main() -> None:
     if not config.BOT_TOKEN:
         raise SystemExit(
-            "❌ لازم تحط TELEGRAM_BOT_TOKEN في متغيرات البيئة أو في ملف .env"
+            "\n❌ التوكن مش موجود.\n"
+            "   شغّل setup.bat (ويندوز) أو ./setup.sh (ماك/لينكس)،\n"
+            "   أو حط TELEGRAM_BOT_TOKEN بنفسك في ملف .env\n"
         )
     if not store.exists():
         logger.warning(
             "قاعدة البيانات %s مش موجودة — شغّل import_results.py الأول.",
             config.DB_PATH,
         )
+
+    username = preflight()
 
     application = Application.builder().token(config.BOT_TOKEN).build()
     application.add_handler(CommandHandler("start", cmd_start))
@@ -192,7 +232,8 @@ def main() -> None:
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, on_text))
     application.add_error_handler(on_error)
 
-    logger.info("البوت اشتغل ✅")
+    logger.info("البوت اشتغل ✅  افتحه من هنا: https://t.me/%s", username)
+    logger.info("لإيقافه: اضغط Ctrl+C")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 

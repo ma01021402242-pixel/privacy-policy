@@ -17,14 +17,29 @@
 
 ---
 
+## الطريقة السريعة
+
+| | ويندوز | ماك / لينكس |
+|---|---|---|
+| التجهيز (بيئة + مكتبات + توكن) | دبل كليك `setup.bat` | `./setup.sh` |
+| استيراد ملف النتيجة | اسحب الملف على `import.bat` | `./import.sh results.xlsx` |
+| تشغيل البوت | دبل كليك `run-bot.bat` | `./run-bot.sh` |
+
+باقي الصفحة للتحكّم اليدوي والتفاصيل.
+
+---
+
 ## 1. التثبيت
 
 ```bash
 cd results-bot
 python3 -m venv venv
-source venv/bin/activate        # على ويندوز:  venv\Scripts\activate
-pip install -r requirements.txt
+pip install -r requirements.txt        # أو: ./venv/bin/pip install -r requirements.txt
 ```
+
+> السكريبتات فوق بتستخدم مفسّر البيئة مباشرةً (`venv/bin/python` أو
+> `venv\Scripts\python.exe`) من غير `activate`، وده بيتفادى مشاكل صلاحيات
+> تشغيل السكريبتات في PowerShell.
 
 ## 2. جهّز الإعدادات
 
