@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نتيجة الثانوية العامة</title>
+<style>
+  :root {
+    --bg: #f4f6fb;
+    --card: #ffffff;
+    --ink: #10203a;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --brand: #1d63d1;
+    --brand-ink: #ffffff;
+    --ok: #16a34a;
+    --warn: #d97706;
+    --bad: #dc2626;
+    --shadow: 0 10px 30px rgba(16, 32, 58, .08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1420;
+      --card: #151d2c;
+      --ink: #e8eef7;
+      --muted: #93a3b8;
+      --line: #263247;
+      --brand: #4f8bef;
+      --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px 16px 64px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Segoe UI", Tahoma, "Noto Naskh Arabic", Arial, sans-serif;
+    line-height: 1.7;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 24px; }
+  header h1 { font-size: 1.6rem; margin: 0 0 6px; }
+  header p { margin: 0; color: var(--muted); font-size: .92rem; }
+  form {
+    display: flex; gap: 10px; margin-bottom: 20px;
+    background: var(--card); padding: 12px; border-radius: 14px;
+    box-shadow: var(--shadow); border: 1px solid var(--line);
+  }
+  input {
+    flex: 1; min-width: 0; border: 0; background: transparent; color: inherit;
+    font-size: 1.05rem; padding: 10px 12px; font-family: inherit;
+  }
+  input:focus { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 8px; }
+  button {
+    border: 0; background: var(--brand); color: var(--brand-ink);
+    padding: 10px 22px; border-radius: 10px; font-size: 1rem;
+    font-family: inherit; cursor: pointer; font-weight: 600;
+  }
+  button:disabled { opacity: .6; cursor: progress; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px;
+  }
+  .msg { text-align: center; color: var(--muted); }
+  .msg.error { color: var(--bad); }
+  .name { font-size: 1.3rem; font-weight: 700; margin: 0 0 4px; }
+  .seat { color: var(--muted); font-size: .9rem; margin: 0 0 16px; }
+  .status { display: inline-block; padding: 4px 14px; border-radius: 999px;
+            font-weight: 700; font-size: .95rem; margin-bottom: 16px;
+            background: color-mix(in srgb, var(--brand) 12%, transparent); }
+  .status.ok   { color: var(--ok);   background: rgba(22, 163, 74, .12); }
+  .status.warn { color: var(--warn); background: rgba(217, 119, 6, .14); }
+  .status.bad  { color: var(--bad);  background: rgba(220, 38, 38, .12); }
+  .totals { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .tile { flex: 1 1 140px; background: var(--bg); border: 1px solid var(--line);
+          border-radius: 12px; padding: 12px 14px; }
+  .tile span { display: block; color: var(--muted); font-size: .8rem; }
+  .tile strong { font-size: 1.35rem; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  th, td { text-align: right; padding: 9px 4px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; font-size: .85rem; }
+  td:last-child, th:last-child { text-align: left; font-variant-numeric: tabular-nums; }
+  h3 { font-size: 1rem; margin: 20px 0 4px; }
+  .meta { color: var(--muted); font-size: .88rem; }
+  .matches li { margin-bottom: 10px; }
+  .matches button { background: transparent; color: var(--brand); padding: 0;
+                    font-weight: 700; text-decoration: underline; }
+  footer { text-align: center; color: var(--muted); font-size: .8rem; margin-top: 28px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 id="title">نتيجة الثانوية العامة</h1>
+    <p id="subtitle">اكتب رقم جلوسك واضغط بحث</p>
+  </header>
+
+  <form id="form">
+    <input id="q" inputmode="search" autocomplete="off"
+           placeholder="رقم الجلوس أو اسم الطالب" aria-label="رقم الجلوس">
+    <button type="submit" id="go">بحث</button>
+  </form>
+
+  <div id="out"></div>
+
+  <footer>البيانات معروضة كما وردت في ملف النتيجة الرسمي.</footer>
+</div>
+
+<script>
+const out = document.getElementById('out');
+const form = document.getElementById('form');
+const input = document.getElementById('q');
+const go = document.getElementById('go');
+
+const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+}[c]));
+
+const num = (value) => value === null || value === undefined ? '—'
+  : (Number.isInteger(+value) ? String(+value) : (+value).toFixed(2).replace(/\.?0+$/, ''));
+
+function statusClass(text) {
+  const s = String(text || '');
+  if (/ناجح|نجح|مقبول/.test(s)) return 'ok';
+  if (/دور ثان|ملحق|إعادة|اعادة/.test(s)) return 'warn';
+  if (/راسب|غائب|محروم|ملغ/.test(s)) return 'bad';
+  return '';
+}
+
+function renderResult(r) {
+  const rows = Object.entries(r.subjects || {})
+    .map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('');
+  const info = [
+    ['الشعبة', r.branch], ['المدرسة', r.school],
+    ['الإدارة', r.administration], ['المحافظة', r.governorate]
+  ].filter(([, v]) => v).map(([k, v]) => `<div class="meta">${esc(k)}: ${esc(v)}</div>`).join('');
+
+  out.innerHTML = `
+    <div class="card">
+      <p class="name">${esc(r.name || 'طالب')}</p>
+      <p class="seat">رقم الجلوس: ${esc(r.seat_no)}</p>
+      ${r.status ? `<div class="status ${statusClass(r.status)}">${esc(r.status_icon)} ${esc(r.status)}</div>` : ''}
+      <div class="totals">
+        <div class="tile"><span>المجموع</span><strong>${num(r.total)}${r.total_max ? ' من ' + num(r.total_max) : ''}</strong></div>
+        <div class="tile"><span>النسبة</span><strong>${r.percentage !== null && r.percentage !== undefined ? num(r.percentage) + '%' : '—'}</strong></div>
+      </div>
+      ${info}
+      ${rows ? `<h3>الدرجات</h3><table><thead><tr><th>المادة</th><th>الدرجة</th></tr></thead><tbody>${rows}</tbody></table>` : ''}
+    </div>`;
+}
+
+function renderMatches(matches) {
+  const items = matches.map((m) => `
+    <li>
+      <button type="button" data-seat="${esc(m.seat_no)}">${esc(m.name || 'بدون اسم')}</button>
+      <div class="meta">رقم الجلوس: ${esc(m.seat_no)}${m.governorate ? ' — ' + esc(m.governorate) : ''}${m.school ? ' / ' + esc(m.school) : ''}</div>
+    </li>`).join('');
+  out.innerHTML = `<div class="card"><h3>لقينا ${matches.length} نتيجة</h3><ul class="matches">${items}</ul></div>`;
+  out.querySelectorAll('button[data-seat]').forEach((button) => {
+    button.addEventListener('click', () => {
+      input.value = button.dataset.seat;
+      search();
+    });
+  });
+}
+
+async function search() {
+  const query = input.value.trim();
+  if (!query) return;
+  go.disabled = true;
+  out.innerHTML = '<p class="msg">بندوّر…</p>';
+  try {
+    const response = await fetch('/api/result?q=' + encodeURIComponent(query));
+    const data = await response.json();
+    if (data.result) renderResult(data.result);
+    else if (data.matches) renderMatches(data.matches);
+    else out.innerHTML = `<p class="msg error">${esc(data.error || 'حصل خطأ.')}</p>`;
+  } catch (error) {
+    out.innerHTML = '<p class="msg error">تعذّر الاتصال بالخادم، جرّب تاني.</p>';
+  } finally {
+    go.disabled = false;
+  }
+}
+
+form.addEventListener('submit', (event) => { event.preventDefault(); search(); });
+
+fetch('/api/config').then((r) => r.json()).then((cfg) => {
+  if (cfg.title) { document.title = cfg.title; document.getElementById('title').textContent = cfg.title; }
+  if (!cfg.ready) document.getElementById('subtitle').textContent = 'النتيجة لسه مترفعتش';
+  else if (cfg.updated_at) document.getElementById('subtitle').textContent = 'آخر تحديث: ' + cfg.updated_at;
+}).catch(() => {});
+</script>
+</body>
+</html>

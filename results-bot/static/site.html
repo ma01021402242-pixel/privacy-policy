@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+  :root {
+    --bg: #f4f6fb; --card: #fff; --ink: #10203a; --muted: #64748b;
+    --line: #e2e8f0; --brand: #1d63d1; --ok: #16a34a; --warn: #d97706; --bad: #dc2626;
+    --shadow: 0 10px 30px rgba(16,32,58,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1420; --card: #151d2c; --ink: #e8eef7; --muted: #93a3b8;
+      --line: #263247; --brand: #4f8bef; --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px 16px 64px; background: var(--bg); color: var(--ink);
+    font-family: "Segoe UI", Tahoma, "Noto Naskh Arabic", Arial, sans-serif; line-height: 1.7;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 24px; }
+  header h1 { font-size: 1.6rem; margin: 0 0 6px; }
+  header p { margin: 0; color: var(--muted); font-size: .92rem; }
+  form {
+    display: flex; gap: 10px; margin-bottom: 20px; background: var(--card);
+    padding: 12px; border-radius: 14px; box-shadow: var(--shadow); border: 1px solid var(--line);
+  }
+  input {
+    flex: 1; min-width: 0; border: 0; background: transparent; color: inherit;
+    font-size: 1.15rem; padding: 10px 12px; font-family: inherit;
+    font-variant-numeric: tabular-nums; letter-spacing: .04em;
+  }
+  input:focus { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 8px; }
+  button {
+    border: 0; background: var(--brand); color: #fff; padding: 10px 22px;
+    border-radius: 10px; font-size: 1rem; font-family: inherit; cursor: pointer; font-weight: 600;
+  }
+  button:disabled { opacity: .6; cursor: progress; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px;
+  }
+  .msg { text-align: center; color: var(--muted); }
+  .msg.error { color: var(--bad); }
+  .name { font-size: 1.3rem; font-weight: 700; margin: 0 0 4px; }
+  .seat { color: var(--muted); font-size: .9rem; margin: 0 0 16px; }
+  .status {
+    display: inline-block; padding: 4px 14px; border-radius: 999px;
+    font-weight: 700; font-size: .95rem; margin-bottom: 16px;
+    background: rgba(100,116,139,.14);
+  }
+  .status.ok { color: var(--ok); background: rgba(22,163,74,.12); }
+  .status.warn { color: var(--warn); background: rgba(217,119,6,.14); }
+  .status.bad { color: var(--bad); background: rgba(220,38,38,.12); }
+  .totals { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .tile {
+    flex: 1 1 140px; background: var(--bg); border: 1px solid var(--line);
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .tile span { display: block; color: var(--muted); font-size: .8rem; }
+  .tile strong { font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  th, td { text-align: right; padding: 9px 4px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; font-size: .85rem; }
+  td:last-child, th:last-child { text-align: left; font-variant-numeric: tabular-nums; }
+  h3 { font-size: 1rem; margin: 20px 0 4px; }
+  .meta { color: var(--muted); font-size: .88rem; }
+  .actions { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .actions button { background: transparent; border: 1px solid var(--line); color: var(--brand); }
+  footer { text-align: center; color: var(--muted); font-size: .8rem; margin-top: 28px; }
+  @media print {
+    body { background: #fff; padding: 0; }
+    form, .actions, footer { display: none; }
+    .card { box-shadow: none; border: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>{{TITLE}}</h1>
+    <p id="subtitle">بندوّر…</p>
+  </header>
+
+  <form id="form">
+    <input id="q" inputmode="numeric" autocomplete="off" enterkeyhint="search"
+           placeholder="اكتب رقم الجلوس" aria-label="رقم الجلوس">
+    <button type="submit" id="go">بحث</button>
+  </form>
+
+  <div id="out"></div>
+
+  <footer>البيانات معروضة كما وردت في ملف النتيجة الرسمي.</footer>
+</div>
+
+<script>
+const out = document.getElementById('out');
+const form = document.getElementById('form');
+const input = document.getElementById('q');
+const go = document.getElementById('go');
+const subtitle = document.getElementById('subtitle');
+
+let meta = null;
+const shardCache = new Map();
+
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+}[c]));
+
+const num = (v) => (v === null || v === undefined) ? '—'
+  : (Number.isInteger(+v) ? String(+v) : String(+(+v).toFixed(2)));
+
+// أرقام هندية وفارسية -> إنجليزية
+const toAscii = (s) => String(s)
+  .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x0660)
+  .replace(/[۰-۹]/g, (d) => d.charCodeAt(0) - 0x06F0);
+
+function statusClass(text) {
+  const s = String(text || '');
+  if (/ناجح|نجح|مقبول/.test(s)) return 'ok';
+  if (/دور ثان|ملحق|إعادة|اعادة/.test(s)) return 'warn';
+  if (/راسب|غائب|محروم|ملغ/.test(s)) return 'bad';
+  return '';
+}
+
+function pick(list, index) {
+  return (index === null || index === undefined) ? '' : (list[index] || '');
+}
+
+function render(seat, record) {
+  const [name, total, percentage, st, sc, ad, gv, br, values] = record;
+  const status = pick(meta.statuses, st);
+
+  const rows = meta.subjects
+    .map((subject, i) => [subject, values[i]])
+    .filter(([, value]) => value !== null && value !== undefined && value !== '')
+    .map(([subject, value]) => `<tr><td>${esc(subject)}</td><td>${esc(value)}</td></tr>`)
+    .join('');
+
+  const info = [
+    ['الشعبة', pick(meta.branches, br)],
+    ['المدرسة', pick(meta.schools, sc)],
+    ['الإدارة', pick(meta.administrations, ad)],
+    ['المحافظة', pick(meta.governorates, gv)]
+  ].filter(([, v]) => v)
+   .map(([k, v]) => `<div class="meta">${esc(k)}: ${esc(v)}</div>`).join('');
+
+  out.innerHTML = `
+    <div class="card">
+      <p class="name">${esc(name || 'طالب')}</p>
+      <p class="seat">رقم الجلوس: ${esc(seat)}</p>
+      ${status ? `<div class="status ${statusClass(status)}">${esc(status)}</div>` : ''}
+      <div class="totals">
+        <div class="tile"><span>المجموع</span><strong>${num(total)}${meta.total_max ? ' من ' + num(meta.total_max) : ''}</strong></div>
+        <div class="tile"><span>النسبة</span><strong>${percentage === null || percentage === undefined ? '—' : num(percentage) + '%'}</strong></div>
+      </div>
+      ${info}
+      ${rows ? `<h3>الدرجات</h3><table><thead><tr><th>المادة</th><th>الدرجة</th></tr></thead><tbody>${rows}</tbody></table>` : ''}
+      <div class="actions"><button type="button" id="print">🖨 طباعة / حفظ PDF</button></div>
+    </div>`;
+  document.getElementById('print').addEventListener('click', () => window.print());
+}
+
+async function loadShard(name) {
+  if (shardCache.has(name)) return shardCache.get(name);
+  const response = await fetch(`data/${name}.json`);
+  if (!response.ok) throw new Error('shard');
+  const data = await response.json();
+  shardCache.set(name, data);
+  return data;
+}
+
+async function search() {
+  if (!meta) return;
+  const seat = toAscii(input.value).replace(/\D/g, '');
+  if (!seat) {
+    out.innerHTML = '<p class="msg error">اكتب رقم الجلوس بالأرقام.</p>';
+    return;
+  }
+  go.disabled = true;
+  out.innerHTML = '<p class="msg">بندوّر…</p>';
+  try {
+    const name = meta.shard_digits === 0
+      ? 'all'
+      : seat.slice(-meta.shard_digits).padStart(meta.shard_digits, '0');
+    const shard = await loadShard(name);
+    let record = shard[seat];
+    if (!record) {
+      // نجرب من غير الأصفار البادئة، وبأصفار زيادة
+      const bare = seat.replace(/^0+/, '');
+      const key = Object.keys(shard).find((k) => k.replace(/^0+/, '') === bare);
+      if (key) record = shard[key];
+      if (record) { render(key, record); return; }
+    }
+    if (!record) {
+      out.innerHTML = `<p class="msg error">مفيش نتيجة لرقم الجلوس «${esc(seat)}».<br>اتأكد من الرقم وجرّب تاني.</p>`;
+      return;
+    }
+    render(seat, record);
+    history.replaceState(null, '', '#' + seat);
+  } catch (error) {
+    out.innerHTML = '<p class="msg error">حصلت مشكلة في تحميل البيانات، جرّب تاني.</p>';
+  } finally {
+    go.disabled = false;
+  }
+}
+
+form.addEventListener('submit', (event) => { event.preventDefault(); search(); });
+
+fetch('data/meta.json')
+  .then((r) => r.json())
+  .then((data) => {
+    meta = data;
+    const parts = [];
+    if (data.count) parts.push(`${data.count.toLocaleString('ar-EG')} طالب`);
+    if (data.updated_at) parts.push('آخر تحديث: ' + data.updated_at);
+    subtitle.textContent = parts.join(' — ') || 'اكتب رقم جلوسك واضغط بحث';
+    input.focus();
+    const fromHash = toAscii(location.hash.slice(1)).replace(/\D/g, '');
+    if (fromHash) { input.value = fromHash; search(); }
+  })
+  .catch(() => {
+    subtitle.textContent = 'النتيجة لسه مترفعتش';
+    out.innerHTML = '<p class="msg error">مقدرتش أحمّل البيانات.</p>';
+  });
+</script>
+</body>
+</html>
