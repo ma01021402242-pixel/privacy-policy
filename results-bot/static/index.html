@@ -142,7 +142,7 @@ function renderResult(r) {
       <p class="seat">رقم الجلوس: ${esc(r.seat_no)}</p>
       ${r.status ? `<div class="status ${statusClass(r.status)}">${esc(r.status_icon)} ${esc(r.status)}</div>` : ''}
       <div class="totals">
-        <div class="tile"><span>المجموع</span><strong>${num(r.total)}${r.total_max ? ' / ' + num(r.total_max) : ''}</strong></div>
+        <div class="tile"><span>المجموع</span><strong>${num(r.total)}${r.total_max ? ' من ' + num(r.total_max) : ''}</strong></div>
         <div class="tile"><span>النسبة</span><strong>${r.percentage !== null && r.percentage !== undefined ? num(r.percentage) + '%' : '—'}</strong></div>
       </div>
       ${info}
