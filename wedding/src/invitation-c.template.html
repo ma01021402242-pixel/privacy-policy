@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دعوة زفاف — أحمد &amp; حور</title>
+<style>
+{{FONTS}}
+
+:root{
+  --paper:#FCF7EC;
+  --paper-2:#F1E6D2;
+  --gold:#A8863C;
+  --gold-l:#CBAC69;
+  --wine:#6B2436;
+  --wine-l:#8E3C4E;
+  --ink:#5A4A3E;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#1A1410}
+body{
+  background:radial-gradient(120% 84% at 50% 0%, #2B211A 0%, #140F0B 76%);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:30px 14px;font-family:'Amiri',serif;-webkit-font-smoothing:antialiased;
+}
+
+/* ------------------------------------------------------------------ card */
+.card{
+  position:relative;width:1080px;height:1500px;flex:0 0 auto;overflow:hidden;
+  color:var(--ink);
+  background:
+    radial-gradient(126% 62% at 50% -8%, #FFFDF7 0%, rgba(255,253,247,0) 56%),
+    radial-gradient(110% 58% at 50% 110%, #EADCC3 0%, rgba(234,220,195,0) 54%),
+    linear-gradient(162deg, var(--paper) 0%, #F8F0E0 48%, var(--paper-2) 100%);
+  box-shadow:0 48px 110px -34px rgba(0,0,0,.8);
+}
+.tile{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:url("{{TILE}}");background-repeat:repeat;opacity:.075;
+}
+.grain{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:url("{{GRAIN}}");opacity:.30;mix-blend-mode:multiply;
+}
+
+/* ----------------------------------------------------------------- frame */
+.frame{position:absolute;inset:44px;z-index:2;pointer-events:none;
+  border:2px solid var(--gold);opacity:.85}
+.frame::after{content:"";position:absolute;inset:10px;border:1px solid var(--gold-l);opacity:.8}
+.frame::before{content:"";position:absolute;inset:-11px;border:1px solid var(--gold);opacity:.4}
+
+.med{position:absolute;width:172px;height:172px;z-index:3;pointer-events:none}
+.med.tr{top:44px;right:44px;transform:scaleX(-1)}
+.med.tl{top:44px;left:44px}
+.med.br{bottom:44px;right:44px;transform:scale(-1,-1)}
+.med.bl{bottom:44px;left:44px;transform:scaleY(-1)}
+
+/* ------------------------------------------------------------- structure */
+.inner{
+  position:absolute;inset:44px;z-index:4;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:120px 92px 108px;text-align:center;
+}
+.grp{display:flex;flex-direction:column;align-items:center;width:100%}
+
+/* -------------------------------------------------------------- the verse */
+.bism{font-size:30px;color:var(--gold);margin-bottom:26px}
+.holy{position:relative;width:100%;max-width:840px}
+.cartouche{position:absolute;inset:0;width:100%;height:100%}
+.tip{position:absolute;top:50%;width:44px;height:44px;transform:translateY(-50%);z-index:2}
+.tip.a{right:-22px}
+.tip.b{left:-22px}
+.holy .body{position:relative;z-index:1;padding:44px 92px 38px}
+.aya{
+  font-size:37px;line-height:1.95;color:var(--wine);
+}
+.aya .b{display:block;font-size:19px;letter-spacing:.5px;color:var(--gold);
+  margin-top:14px;font-family:'Reem Kufi',sans-serif;word-spacing:6px}
+
+.srule{display:block;width:560px;height:46px;margin:34px 0 22px}
+
+/* --------------------------------------------------------------- couple */
+.kicker{
+  font-family:'Reem Kufi',sans-serif;font-size:32px;font-weight:500;
+  word-spacing:10px;color:var(--gold);
+}
+.sub{margin-top:20px;font-size:29px;line-height:1.8;color:var(--ink);max-width:660px}
+.names{margin-top:14px;display:flex;align-items:center;justify-content:center;gap:34px}
+.name{
+  font-family:'Aref Ruqaa',serif;font-weight:700;font-size:152px;line-height:1.2;
+  color:var(--wine);padding-bottom:14px;
+}
+.amp{
+  font-family:'Cormorant Garamond',serif;font-weight:300;font-size:84px;
+  color:var(--gold);direction:ltr;transform:translateY(-14px);
+}
+
+/* -------------------------------------------------------------- details */
+.band{display:block;width:740px;height:34px;opacity:.95;margin-bottom:30px}
+.when{
+  font-family:'Cormorant Garamond',serif;font-weight:300;direction:ltr;
+  font-size:72px;letter-spacing:13px;color:var(--wine);text-indent:13px;
+}
+.when-ar{margin-top:12px;font-size:31px;color:var(--ink)}
+.when-ar b{font-weight:400;color:var(--wine-l)}
+.where{margin-top:30px;font-size:40px;line-height:1.45;color:var(--wine);font-weight:700}
+.where small{display:block;font-size:28px;font-weight:400;color:var(--ink);margin-top:6px}
+.note{margin-top:26px;font-size:26px;color:var(--gold)}
+
+/* ----------------------------------------------------------------- print */
+@page{size:A4 portrait;margin:0}
+@media print{
+  html,body{background:#fff;margin:0;padding:0;overflow:hidden}
+  body{display:block}
+  .stage{transform:scale(.735)!important;transform-origin:top center;
+         width:794px!important;height:1103px!important;margin:0 auto;overflow:hidden}
+  .card{box-shadow:none}
+}
+@media screen and (max-width:1120px){ body{padding:12px 6px;align-items:flex-start} }
+.stage{transform-origin:top center}
+</style>
+</head>
+<body>
+
+<div class="stage">
+<div class="card">
+  <div class="tile"></div>
+  <div class="grain"></div>
+  <div class="frame"></div>
+  {{MED_TL}}{{MED_TR}}{{MED_BL}}{{MED_BR}}
+
+  <div class="inner">
+
+    <div class="grp">
+      <div class="bism">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْم</div>
+      <div class="holy">
+        {{CARTOUCHE}}{{TIP_A}}{{TIP_B}}
+        <div class="body">
+          <p class="aya">
+            ﴿ وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا<br>
+            لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ﴾
+            <span class="b">سورة الروم — الآية ٢١</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grp">
+      {{STARRULE}}
+      <div class="kicker">دعوة زفاف</div>
+      <p class="sub">بكلِّ الحبِّ والودِّ نتشرَّفُ بدعوتِكم لحضورِ حفلِ زفاف</p>
+      <div class="names">
+        <div class="name">أحمد</div>
+        <div class="amp">&amp;</div>
+        <div class="name">حور</div>
+      </div>
+    </div>
+
+    <div class="grp">
+      {{BAND}}
+      <div class="when">01 · 08 · 2026</div>
+      <div class="when-ar">يوم <b>السبت</b> — الساعة <b>التاسعة مساءً</b></div>
+      <div class="where">قاعة جراند سولو<small>بعد كوبري الفحص</small></div>
+      <div class="note">حضورُكم أجملُ هديَّة</div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var stage=document.querySelector('.stage');
+  function fit(){
+    var s=Math.min(1,(window.innerWidth-20)/1080);
+    stage.style.transform='scale('+s+')';
+    stage.style.width=(1080*s)+'px';
+    stage.style.height=(1500*s)+'px';
+  }
+  fit();addEventListener('resize',fit);
+})();
+</script>
+</body>
+</html>

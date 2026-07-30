@@ -15,6 +15,13 @@
 (الأسماء + التاريخ + المكان بس). مقاسها ١٠٨٠ × ١٣٥٠ يعني مظبوطة للإنستجرام
 والواتساب. نفس الملفات: `.png` بجودة عالية و `.jpg` و `.pdf`.
 
+## التصميم الثالث — «الزخرفة» (`design-c/`)
+
+طابع إسلامي هندسي بدل الورد: نجوم ثمانية وزخرفة عربية، بألوان نبيتي وذهبي على
+ورق كريمي. الآية هي بطلة التصميم — ﴿وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا
+لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً﴾ — سورة الروم، الآية ٢١ — جوّه إطار
+مزخرف في أعلى البطاقة. المقاس ١٠٨٠ × ١٥٠٠.
+
 ## التفاصيل المكتوبة على البطاقة
 
 - **العروسان:** أحمد & حور
@@ -36,6 +43,8 @@ python3 ornaments.py     # botanical SVGs for the framed design  -> ornaments/
 python3 build.py         # assembles -> wedding-invitation.html
 python3 ornaments_b.py   # botanical SVGs for the arch design    -> ornaments_b/
 python3 build_b.py       # assembles -> wedding-invitation-b.html
+python3 ornaments_c.py   # geometric SVGs for the arabesque design -> ornaments_c/
+python3 build_c.py       # assembles -> wedding-invitation-c.html
 ```
 
 Export the shareable image and the print-ready PDF with headless Chromium:
