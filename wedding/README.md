@@ -9,6 +9,12 @@
 | `wedding-invitation.pdf` | للطباعة — صفحة A4 واحدة |
 | `wedding-invitation.html` | النسخة الأصلية، تُفتح على أي متصفح وتعمل بدون إنترنت |
 
+## التصميم الثاني — «القوس» (`design-b/`)
+
+نسخة مختصرة بشكل مختلف: خلفية زيتوني غامق وقوس عاجي في النص، والكلام أقل
+(الأسماء + التاريخ + المكان بس). مقاسها ١٠٨٠ × ١٣٥٠ يعني مظبوطة للإنستجرام
+والواتساب. نفس الملفات: `.png` بجودة عالية و `.jpg` و `.pdf`.
+
 ## التفاصيل المكتوبة على البطاقة
 
 - **العروسان:** أحمد & حور
@@ -26,8 +32,10 @@ offline and on any device.
 ```sh
 cd src
 python3 embed_fonts.py   # downloads the Google Fonts subsets -> fonts.css
-python3 ornaments.py     # regenerates the botanical SVGs -> ornaments/
+python3 ornaments.py     # botanical SVGs for the framed design  -> ornaments/
 python3 build.py         # assembles -> wedding-invitation.html
+python3 ornaments_b.py   # botanical SVGs for the arch design    -> ornaments_b/
+python3 build_b.py       # assembles -> wedding-invitation-b.html
 ```
 
 Export the shareable image and the print-ready PDF with headless Chromium:

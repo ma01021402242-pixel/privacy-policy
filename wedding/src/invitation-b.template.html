@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دعوة زفاف — أحمد &amp; حور</title>
+<style>
+{{FONTS}}
+
+:root{
+  --ground:#26311D;
+  --ground-2:#161D10;
+  --panel:#FBF5E8;
+  --panel-2:#F1E7D4;
+  --deep:#33421F;
+  --sage:#55683F;
+  --gold:#A9873F;
+  --gold-l:#CFB279;
+  --ink:#4E4736;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#0E1209}
+body{
+  background:radial-gradient(120% 80% at 50% 0%, #232D1B 0%, #0C1007 78%);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:30px 14px;font-family:'Amiri',serif;-webkit-font-smoothing:antialiased;
+}
+
+/* ------------------------------------------------------------------ card */
+.card{
+  position:relative;width:1080px;height:1350px;flex:0 0 auto;overflow:hidden;
+  background:
+    radial-gradient(96% 60% at 50% 4%, #3A4A2C 0%, rgba(58,74,44,0) 62%),
+    radial-gradient(80% 50% at 12% 96%, #313F24 0%, rgba(49,63,36,0) 60%),
+    linear-gradient(165deg, var(--ground) 0%, var(--ground-2) 100%);
+  box-shadow:0 48px 110px -34px rgba(0,0,0,.85);
+}
+.grain{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:url("{{GRAIN}}");opacity:.30;mix-blend-mode:overlay}
+
+/* ------------------------------------------------------------------ arch */
+.arch{
+  position:absolute;left:96px;right:96px;top:88px;bottom:88px;z-index:2;
+  border-radius:444px 444px 26px 26px;
+  background:
+    radial-gradient(90% 44% at 50% 2%, #FFFDF7 0%, rgba(255,253,247,0) 60%),
+    linear-gradient(168deg, var(--panel) 0%, #F7EFDF 52%, var(--panel-2) 100%);
+  box-shadow:0 26px 60px -24px rgba(0,0,0,.55);
+}
+.arch::after{
+  content:"";position:absolute;inset:14px;border-radius:430px 430px 14px 14px;
+  border:1.1px solid var(--gold);opacity:.5;
+}
+.arch-grain{
+  position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background-image:url("{{GRAIN}}");opacity:.30;mix-blend-mode:multiply;
+}
+
+/* -------------------------------------------------------------- foliage */
+.spray{position:absolute;z-index:4;pointer-events:none}
+.spray-l{left:-24px;top:96px;width:470px;height:430px}
+.spray-r{right:-10px;bottom:36px;width:352px;height:310px}
+
+/* ------------------------------------------------------------- contents */
+.inner{
+  position:absolute;left:96px;right:96px;top:88px;bottom:88px;z-index:5;
+  display:flex;flex-direction:column;align-items:center;
+  padding:164px 92px 104px;text-align:center;color:var(--ink);
+  justify-content:space-between;
+}
+.grp{display:flex;flex-direction:column;align-items:center;width:100%}
+.crest{display:block;width:200px;height:46px;opacity:.95}
+
+.kicker{
+  margin-top:22px;
+  font-family:'Reem Kufi',sans-serif;font-size:34px;font-weight:500;
+  word-spacing:10px;color:var(--gold);
+}
+.sub{
+  margin-top:22px;font-size:27px;line-height:1.85;color:var(--sage);max-width:520px;
+}
+
+.names{margin-top:4px;display:flex;align-items:center;justify-content:center;gap:30px}
+.name{
+  font-family:'Aref Ruqaa',serif;font-weight:700;font-size:158px;line-height:1.18;
+  color:var(--deep);padding-bottom:14px;
+}
+.amp{
+  font-family:'Cormorant Garamond',serif;font-weight:300;font-size:86px;
+  color:var(--gold);direction:ltr;transform:translateY(-14px);
+}
+
+.rule{display:block;width:400px;height:20px;margin:26px 0 30px}
+
+.when{
+  font-family:'Cormorant Garamond',serif;font-weight:300;direction:ltr;
+  font-size:70px;letter-spacing:12px;color:var(--sage);text-indent:12px;
+}
+.when-ar{margin-top:14px;font-size:31px;color:var(--ink);letter-spacing:.4px}
+.when-ar b{font-weight:400;color:var(--deep)}
+
+.where{font-size:38px;line-height:1.5;color:var(--deep);font-weight:700}
+.where small{display:block;font-size:27px;font-weight:400;color:var(--ink);margin-top:4px}
+.note{margin-top:22px;font-size:25px;color:var(--gold);letter-spacing:.3px}
+
+/* ----------------------------------------------------------------- print */
+@page{size:A4 portrait;margin:0}
+@media print{
+  html,body{background:#fff;margin:0;padding:0;overflow:hidden}
+  body{display:block}
+  .stage{transform:scale(.735)!important;transform-origin:top center;
+         width:794px!important;height:993px!important;margin:0 auto;overflow:hidden}
+  .card{box-shadow:none}
+}
+@media screen and (max-width:1120px){ body{padding:12px 6px;align-items:flex-start} }
+.stage{transform-origin:top center}
+</style>
+</head>
+<body>
+
+<div class="stage">
+<div class="card">
+  <div class="grain"></div>
+  <div class="arch"><div class="arch-grain"></div></div>
+
+  <div class="inner">
+    <div class="grp">
+      {{CREST}}
+      <div class="kicker">دعوة زفاف</div>
+      <p class="sub">بكلِّ الحبِّ نتشرَّفُ بدعوتِكم لحضورِ حفلِ زفاف</p>
+    </div>
+
+    <div class="grp">
+    <div class="names">
+      <div class="name">أحمد</div>
+      <div class="amp">&amp;</div>
+      <div class="name">حور</div>
+    </div>
+
+    {{RULE}}
+
+    <div class="when">01 · 08 · 2026</div>
+    <div class="when-ar">يوم <b>السبت</b> — الساعة <b>التاسعة مساءً</b></div>
+    </div>
+
+    <div class="grp">
+    <div class="where">قاعة جراند سولو<small>بعد كوبري الفحص</small></div>
+    <div class="note">حضورُكم أجملُ هديَّة</div>
+    </div>
+  </div>
+
+  {{SHOULDER}}
+  {{FOOT}}
+</div>
+</div>
+
+<script>
+(function(){
+  var stage=document.querySelector('.stage');
+  function fit(){
+    var s=Math.min(1,(window.innerWidth-20)/1080);
+    stage.style.transform='scale('+s+')';
+    stage.style.width=(1080*s)+'px';
+    stage.style.height=(1350*s)+'px';
+  }
+  fit();addEventListener('resize',fit);
+})();
+</script>
+</body>
+</html>
