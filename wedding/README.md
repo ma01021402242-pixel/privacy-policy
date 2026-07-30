@@ -4,7 +4,7 @@
 
 | الملف | الاستخدام |
 |---|---|
-| `wedding-invitation.jpg` | للإرسال على واتساب / فيسبوك (1588 × 2246) |
+| `wedding-invitation.jpg` | للإرسال على واتساب / فيسبوك (1588 × 2480) |
 | `wedding-invitation.pdf` | للطباعة — صفحة A4 واحدة |
 | `wedding-invitation.html` | النسخة الأصلية، تُفتح على أي متصفح وتعمل بدون إنترنت |
 
@@ -32,12 +32,12 @@ python3 build.py         # assembles -> wedding-invitation.html
 Export the shareable image and the print-ready PDF with headless Chromium:
 
 ```sh
-chrome --headless --force-device-scale-factor=2 --window-size=794,1123 \
+chrome --headless --force-device-scale-factor=2 --window-size=794,1240 \
        --screenshot=wedding-invitation.png file://$PWD/wedding-invitation.html
 chrome --headless --no-pdf-header-footer \
        --print-to-pdf=wedding-invitation.pdf file://$PWD/wedding-invitation.html
 ```
 
 To change the names, date, time or venue, edit `src/invitation.template.html`
-and re-run `build.py`. The card is a fixed 794 × 1123 px canvas (A4 at 96 dpi);
-it scales down to fit narrow phone screens automatically.
+and re-run `build.py`. The card is a fixed 794 × 1240 px canvas; print CSS scales it down onto a
+single A4 sheet, and it shrinks to fit narrow phone screens automatically.
